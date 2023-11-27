@@ -1,7 +1,6 @@
 package com.example.securefilecryptor.controller;
 
 import com.example.securefilecryptor.constants.Message;
-import com.example.securefilecryptor.exceptions.CorruptedFileException;
 import com.example.securefilecryptor.model.FileEncryptor;
 import com.example.securefilecryptor.styles.ButtonStyle;
 import com.example.securefilecryptor.styles.LabelStyle;
@@ -9,28 +8,45 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+
 
 public class AppController {
 
     @FXML
     private Label pathLabel;
     @FXML
-    private Button loadBtn;
+    private Label titleLabel;
     @FXML
-    private Button actionBtn;
+    private Label msgLabel;
+    @FXML
+    private Label loadFileLabel;
     @FXML
     private PasswordField passwordField;
     @FXML
     private PasswordField passwordVerificationField;
     @FXML
-    private Label msgLabel;
+    private ImageView imageView;
+    @FXML
+    private Button changeModeBtn;
+    @FXML
+    private Button loadBtn;
+    @FXML
+    private Button actionBtn;
+    @FXML
+    private VBox verificationBox;
+
+    private Image lockImg;
+    private Image unlockImg;
 
     private boolean isDecrypting;
-
     private String filePath;
     private String password;
     private String passwordVerification;
@@ -38,12 +54,26 @@ public class AppController {
     private FileEncryptor fileEncryptor;
 
     public void initialize() {
+
         isDecrypting = false;
+
+        lockImg = new Image(getClass().getResourceAsStream("/images/lock.png"));
+        unlockImg = new Image(getClass().getResourceAsStream("/images/unlock.png"));
+
+
+        imageView.setImage(lockImg);
+
+        Font.loadFont(
+                getClass().getResource("/fonts/CamingoCode-Regular.ttf").toExternalForm(),
+                10
+        );
 
         loadBtn.setOnMouseEntered(e->loadBtn.setStyle(ButtonStyle.HOVER.getStyle()));
         loadBtn.setOnMouseExited(e->loadBtn.setStyle(ButtonStyle.DEFAULT.getStyle()));
         actionBtn.setOnMouseEntered(e->actionBtn.setStyle(ButtonStyle.HOVER.getStyle()));
         actionBtn.setOnMouseExited(e->actionBtn.setStyle(ButtonStyle.DEFAULT.getStyle()));
+        changeModeBtn.setOnMouseEntered(e->changeModeBtn.setStyle(ButtonStyle.ALT_HOVER.getStyle()));
+        changeModeBtn.setOnMouseExited(e->changeModeBtn.setStyle(ButtonStyle.ALT_DEFAULT.getStyle()));
 
         passwordField.textProperty().addListener((observable, oldValue, newValue) -> {
             password = newValue;
@@ -80,19 +110,19 @@ public class AppController {
     private void performAction(){
         hideMsg();
 
-        //fileEncryptor.test();
+
         if(!validateForm()){
-           // return;
+            return;
         }
         String errorMsg;
 
         try{
             if(isDecrypting){
                 fileEncryptor.decryptFile(password, filePath);
+                showMsg(Message.DECRYPTION_FINISHED.getMessage(), false);
             }else{
-
                 fileEncryptor.encryptFile(password, filePath);
-                showMsg(Message.ENCRYPTION_SUCCESS.getMessage(), false);
+                showMsg(Message.ENCRYPTION_FINISHED.getMessage(), false);
             }
         }catch (Exception e) {
             errorMsg = e.getMessage();
@@ -103,22 +133,58 @@ public class AppController {
 
     }
 
+    @FXML
+    private void changeMode(){
+        isDecrypting=!isDecrypting;
+        clearForm();
+        updateGUI();
+
+    }
+
+    private void updateGUI(){
+        hideMsg();
+        if(isDecrypting){
+            titleLabel.setText("DECRYPTING");
+            imageView.setImage(unlockImg);
+            changeModeBtn.setText("Encrypt →");
+            actionBtn.setText("Decrypt");
+            loadFileLabel.setText("Select the file to decrypt:");
+            verificationBox.setVisible(false);
+        }else{
+            titleLabel.setText("ENCRYPTING");
+            imageView.setImage(lockImg);
+            changeModeBtn.setText("Decrypt →");
+            actionBtn.setText("Encrypt");
+            loadFileLabel.setText("Select the file to encrypt:");
+            verificationBox.setVisible(true);
+        }
+    }
+
     private boolean validateForm(){
         if(filePath==null||filePath.equals("")){
             showMsg(Message.FILE_PATH_ERROR.getMessage(), true);
             return false;
         }
-        if(password==null|| passwordVerification ==null||password.equals("")|| passwordVerification.equals("")){
-            showMsg(Message.EMPTY_PASSWORD.getMessage(), true);
-            return false;
-        }
+
         if(password.length()<8){
             showMsg(Message.SHORT_PASSWORD.getMessage(), true);
             return false;
         }
-        if(!password.equals(passwordVerification)){
-            showMsg(Message.PASSWORD_DO_NOT_MATCH.getMessage(), true);
+
+        if(password==null||password.equals("")){
+            showMsg(Message.EMPTY_PASSWORD.getMessage(), true);
             return false;
+        }
+
+        if(!isDecrypting){
+            if( passwordVerification ==null|| passwordVerification.equals("")){
+
+            }
+
+            if(!password.equals(passwordVerification)){
+                showMsg(Message.PASSWORD_DO_NOT_MATCH.getMessage(), true);
+                return false;
+            }
         }
         return true;
     }

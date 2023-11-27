@@ -13,6 +13,8 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.securefilecryptor.controller.AppController">
 
@@ -22,13 +24,17 @@
     </HBox>
 
     <VBox alignment="center" prefHeight="477" prefWidth="680" style="-fx-background-color: #fff; -fx-padding: 0 70">
+
         <VBox  style="-fx-background-color: #ffffff; -fx-padding: 0 30" prefHeight="400">
             <HBox prefWidth="680" style="-fx-padding: 12 0">
-                <Label style="-fx-font-size: 28; -fx-font-family: CamingoCode" prefWidth="680">ENCRYPTING</Label>
+                <Label fx:id="titleLabel" style="-fx-font-size: 28; -fx-font-family: CamingoCode" prefWidth="680">ENCRYPTING</Label>
+                <ImageView fx:id="imageView" style="-fx-translate-y: 5">
+
+                </ImageView>
             </HBox>
             <Pane prefHeight="2"  style="-fx-background-color: #f1f1f1" ></Pane>
             <VBox style="-fx-padding: 30 0 0 0">
-                <Label style="-fx-translate-x: 0;-fx-translate-y: -5; -fx-text-fill: #7C7C7C">Select the file to encrypt:</Label>
+                <Label fx:id="loadFileLabel" style="-fx-translate-x: 0;-fx-translate-y: -5; -fx-text-fill: #7C7C7C">Select the file to encrypt:</Label>
                 <HBox style="-fx-padding: 0 0 0 0">
                     <Pane style="-fx-background-color: #f1f1f1;" prefWidth="350" prefHeight="40">
                         <Label fx:id="pathLabel" prefWidth="335" style="-fx-translate-y: 12; -fx-translate-x: 10; -fx-text-fill: #979797;">E.g. /Users/user/desktop</Label>
@@ -45,7 +51,7 @@
 
             </VBox>
 
-            <VBox style="-fx-padding: 10 0 0 0; -fx-translate-y: 10; -fx-translate-x: -5;">
+            <VBox fx:id="verificationBox" style="-fx-padding: 10 0 0 0; -fx-translate-y: 10; -fx-translate-x: -5;">
 
                 <Label style="-fx-text-fill: #7C7C7C; -fx-translate-x: 5; -fx-translate-y: -5;" > Verify your password:</Label>
                 <PasswordField  fx:id="passwordVerificationField" style="-fx-background-color: #f1f1f1; -fx-background-radius: 0; -fx-pref-height: 40; -fx-translate-x: 5; -fx-pref-width: 85; -fx-text-fill: #161616; -fx-font-size: 5; -fx-padding: 0 10"/>
@@ -60,6 +66,9 @@
                     </Label>
 
                 </StackPane>
+                <Button fx:id="changeModeBtn"  onAction="#changeMode" text="Decrypt →" style="-fx-background-color: #fff; -fx-background-radius: 0; -fx-pref-height: 40; -fx-translate-x:23; -fx-pref-width: 85; -fx-text-fill: #0D62FE; -fx-cursor: hand; -fx-font-family: CamingoCode;"/>
+
+
             </HBox>
         </VBox>
 

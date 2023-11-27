@@ -8,11 +8,9 @@ public enum LabelStyle {
     INVISIBLE_LABEL("-fx-text-fill:white");
 
     private final String style;
-
     LabelStyle(String style) {
         this.style = style;
     }
-
     public String getStyle() {
         return style;
     }

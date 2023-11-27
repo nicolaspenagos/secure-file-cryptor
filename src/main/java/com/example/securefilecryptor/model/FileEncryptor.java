@@ -121,7 +121,7 @@ public class FileEncryptor {
     }
 
     private void verifyHash(byte[] originalHash, byte[] obtainedHash) throws CorruptedFileException {
-        System.out.println("Verify hash");
+
         if(!Arrays.equals(originalHash, obtainedHash)){
             throw new CorruptedFileException();
         }
@@ -139,8 +139,6 @@ public class FileEncryptor {
         byte[] hash = digest.digest();
         return hash;
     }
-
-
 
     private SecretKey getKeyFromPassword(String password, String salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory factory = SecretKeyFactory.getInstance(PBKDF2_NAME);

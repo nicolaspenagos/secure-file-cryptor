@@ -7,9 +7,10 @@ public enum Message {
     SHORT_PASSWORD("Your password must be at least 8 characters long!"),
     CIPHER_ERROR("Error while ciphering"),
     LOAD_FILE_ERROR("The was an error loading your file"),
-    ENCRYPTION_SUCCESS("Your file was successfully ciphered"),
+    ENCRYPTION_FINISHED("Your encryption is finished"),
+    DECRYPTION_FINISHED("Your decryption is finished"),
     EMPTY_PASSWORD("One of your passwords is empty"),
-    CORRUPTED_FILE("The file is damage or have been corrupted");
+    CORRUPTED_FILE("The file has been corrupted");
 
     private final String message;
 

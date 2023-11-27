@@ -1,5 +1,18 @@
 package com.example.securefilecryptor.constants;
 
+/**
+ * The {@code Message} enum provides predefined messages for various scenarios in the application.
+ * These messages are used for informing users about specific situations or errors.
+ * Each message has a corresponding constant that can be accessed using the getMessage() method.
+ *
+ * Example usage:
+ * <pre>{@code
+ * String filePathError = Message.FILE_PATH_ERROR.getMessage();
+ * }</pre>
+ *
+ * @author nicolaspenagos
+ * @version 1.0
+ */
 public enum Message {
     PLACEHOLDER_PATH("E.g. /Users/user/desktop"),
     FILE_PATH_ERROR("Your file path is empty!"),
@@ -14,10 +27,20 @@ public enum Message {
 
     private final String message;
 
+    /**
+     * Constructs a new {@code Message} with the provided message.
+     *
+     * @param message The message associated with the constant.
+     */
     Message(String message) {
         this.message = message;
     }
 
+    /**
+     * Gets the message associated with the constant.
+     *
+     * @return The message.
+     */
     public String getMessage() {
         return message;
     }

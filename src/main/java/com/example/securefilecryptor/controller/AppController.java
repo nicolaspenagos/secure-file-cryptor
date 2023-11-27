@@ -17,7 +17,6 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-
 public class AppController {
 
     @FXML
@@ -59,21 +58,16 @@ public class AppController {
 
         lockImg = new Image(getClass().getResourceAsStream("/images/lock.png"));
         unlockImg = new Image(getClass().getResourceAsStream("/images/unlock.png"));
-
-
         imageView.setImage(lockImg);
 
-        Font.loadFont(
-                getClass().getResource("/fonts/CamingoCode-Regular.ttf").toExternalForm(),
-                10
-        );
+        Font.loadFont(getClass().getResource("/fonts/CamingoCode-Regular.ttf").toExternalForm(), 10);
 
-        loadBtn.setOnMouseEntered(e->loadBtn.setStyle(ButtonStyle.HOVER.getStyle()));
-        loadBtn.setOnMouseExited(e->loadBtn.setStyle(ButtonStyle.DEFAULT.getStyle()));
-        actionBtn.setOnMouseEntered(e->actionBtn.setStyle(ButtonStyle.HOVER.getStyle()));
-        actionBtn.setOnMouseExited(e->actionBtn.setStyle(ButtonStyle.DEFAULT.getStyle()));
-        changeModeBtn.setOnMouseEntered(e->changeModeBtn.setStyle(ButtonStyle.ALT_HOVER.getStyle()));
-        changeModeBtn.setOnMouseExited(e->changeModeBtn.setStyle(ButtonStyle.ALT_DEFAULT.getStyle()));
+        loadBtn.setOnMouseEntered(e -> loadBtn.setStyle(ButtonStyle.HOVER.getStyle()));
+        loadBtn.setOnMouseExited(e -> loadBtn.setStyle(ButtonStyle.DEFAULT.getStyle()));
+        actionBtn.setOnMouseEntered(e -> actionBtn.setStyle(ButtonStyle.HOVER.getStyle()));
+        actionBtn.setOnMouseExited(e -> actionBtn.setStyle(ButtonStyle.DEFAULT.getStyle()));
+        changeModeBtn.setOnMouseEntered(e -> changeModeBtn.setStyle(ButtonStyle.ALT_HOVER.getStyle()));
+        changeModeBtn.setOnMouseExited(e -> changeModeBtn.setStyle(ButtonStyle.ALT_DEFAULT.getStyle()));
 
         passwordField.textProperty().addListener((observable, oldValue, newValue) -> {
             password = newValue;
@@ -84,7 +78,6 @@ public class AppController {
 
         fileEncryptor = FileEncryptor.getInstance();
 
-        //System.out.println(font);
     }
 
     @FXML
@@ -107,50 +100,46 @@ public class AppController {
     }
 
     @FXML
-    private void performAction(){
+    private void performAction() {
         hideMsg();
 
-
-        if(!validateForm()){
+        if (!validateForm()) {
             return;
         }
         String errorMsg;
-
-        try{
-            if(isDecrypting){
+        try {
+            if (isDecrypting) {
                 fileEncryptor.decryptFile(password, filePath);
                 showMsg(Message.DECRYPTION_FINISHED.getMessage(), false);
-            }else{
+            } else {
                 fileEncryptor.encryptFile(password, filePath);
                 showMsg(Message.ENCRYPTION_FINISHED.getMessage(), false);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             errorMsg = e.getMessage();
             showMsg(errorMsg, true);
-        }finally {
+        } finally {
             clearForm();
         }
-
     }
 
     @FXML
-    private void changeMode(){
-        isDecrypting=!isDecrypting;
+    private void changeMode() {
+        isDecrypting = !isDecrypting;
         clearForm();
         updateGUI();
-
     }
 
-    private void updateGUI(){
+    private void updateGUI() {
         hideMsg();
-        if(isDecrypting){
+        if (isDecrypting) {
             titleLabel.setText("DECRYPTING");
             imageView.setImage(unlockImg);
             changeModeBtn.setText("Encrypt →");
             actionBtn.setText("Decrypt");
             loadFileLabel.setText("Select the file to decrypt:");
             verificationBox.setVisible(false);
-        }else{
+        } else {
             titleLabel.setText("ENCRYPTING");
             imageView.setImage(lockImg);
             changeModeBtn.setText("Decrypt →");
@@ -160,28 +149,29 @@ public class AppController {
         }
     }
 
-    private boolean validateForm(){
-        if(filePath==null||filePath.equals("")){
+    private boolean validateForm() {
+        if (filePath == null || filePath.equals("")) {
             showMsg(Message.FILE_PATH_ERROR.getMessage(), true);
             return false;
         }
 
-        if(password.length()<8){
+        if (password.length() < 8) {
             showMsg(Message.SHORT_PASSWORD.getMessage(), true);
             return false;
         }
 
-        if(password==null||password.equals("")){
+        if (password == null || password.equals("")) {
             showMsg(Message.EMPTY_PASSWORD.getMessage(), true);
             return false;
         }
 
-        if(!isDecrypting){
-            if( passwordVerification ==null|| passwordVerification.equals("")){
-
+        if (!isDecrypting) {
+            if (passwordVerification == null || passwordVerification.equals("")) {
+                showMsg(Message.EMPTY_PASSWORD.getMessage(), true);
+                return false;
             }
 
-            if(!password.equals(passwordVerification)){
+            if (!password.equals(passwordVerification)) {
                 showMsg(Message.PASSWORD_DO_NOT_MATCH.getMessage(), true);
                 return false;
             }
@@ -189,16 +179,17 @@ public class AppController {
         return true;
     }
 
-    private void showMsg(String msgVal, boolean isError){
-        String newStyle = isError?LabelStyle.ERROR_LABEL.getStyle() : LabelStyle.SUCESS_LABEL.getStyle();
+    private void showMsg(String msgVal, boolean isError) {
+        String newStyle = isError ? LabelStyle.ERROR_LABEL.getStyle() : LabelStyle.SUCESS_LABEL.getStyle();
         msgLabel.setStyle(newStyle);
         msgLabel.setText(msgVal);
     }
-    private void hideMsg(){
+
+    private void hideMsg() {
         msgLabel.setStyle(LabelStyle.INVISIBLE_LABEL.getStyle());
     }
 
-    private void clearForm(){
+    private void clearForm() {
         filePath = null;
         pathLabel.setText(Message.PLACEHOLDER_PATH.getMessage());
         pathLabel.setStyle(LabelStyle.INPUT_LABEL_DEFAULT.getStyle());

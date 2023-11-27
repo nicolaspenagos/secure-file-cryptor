@@ -1,0 +1,7 @@
+module:com.example.securefilecryptor
+com.example.securefilecryptor
+com.example.securefilecryptor.constants
+com.example.securefilecryptor.controller
+com.example.securefilecryptor.exceptions
+com.example.securefilecryptor.model
+com.example.securefilecryptor.styles

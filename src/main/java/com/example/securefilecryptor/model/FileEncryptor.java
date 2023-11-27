@@ -10,12 +10,15 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
+import org.apache.commons.io.FilenameUtils;
+
 public class FileEncryptor {
 
     private final static int PBKDF2_ITERATIONS = 65536;
     private final static String PBKDF2_NAME = "PBKDF2WithHmacSHA256";
     private final static String ALGORITHM_NAME = "AES/CBC/PKCS5Padding";
     private final static int BUFFER_SIZE = 64;
+    private final static String ENCRYPTED_EXTENSION = ".enc";
 
     private static FileEncryptor instance;
 
@@ -29,6 +32,27 @@ public class FileEncryptor {
         return instance;
     }
 
+    public void test(){
+        try {
+            encryptFile("SecretMsg.txt", "/Users/nicolaspenagos/Desktop/SecretMsg.txt");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new RuntimeException(e);
+        } catch (BadPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public void encryptFile(String password, String filePath) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
 
         String outputPath = getOutputPathFromInputPath(filePath, CryptoMode.ENCRYPT);
@@ -44,7 +68,7 @@ public class FileEncryptor {
         objectOutputStream.writeObject(iv.getIV());
         objectOutputStream.writeObject(salt);
 
-        cipherFile( key, iv, CryptoMode.ENCRYPT, inputStream, outputStream);
+        cipherFile(key, iv, CryptoMode.ENCRYPT, inputStream, outputStream);
     }
 
     public void decryptFile(String password, String filePath) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, ClassNotFoundException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
@@ -55,20 +79,17 @@ public class FileEncryptor {
         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 
         byte[] ivBytes = (byte[]) objectInputStream.readObject();
-        String salt =  (String) objectInputStream.readObject();
+        String salt = (String) objectInputStream.readObject();
 
         SecretKey key = getKeyFromPassword(password, salt);
-
         IvParameterSpec iv = new IvParameterSpec(ivBytes);
 
         FileOutputStream outputStream = new FileOutputStream(outputPath);
-
-
-        cipherFile( key, iv, CryptoMode.DECRYPT,  inputStream, outputStream);
+        cipherFile(key, iv, CryptoMode.DECRYPT, inputStream, outputStream);
 
     }
 
-    public void cipherFile(SecretKey key, IvParameterSpec iv, CryptoMode mode, InputStream inputStream, OutputStream outputStream) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException {
+    private void cipherFile(SecretKey key, IvParameterSpec iv, CryptoMode mode, InputStream inputStream, OutputStream outputStream) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException {
 
         int cipherMode = (mode == CryptoMode.ENCRYPT) ? javax.crypto.Cipher.ENCRYPT_MODE : javax.crypto.Cipher.DECRYPT_MODE;
 
@@ -115,23 +136,22 @@ public class FileEncryptor {
         return Base64.getEncoder().encodeToString(salt);
     }
 
-    private String getOutputPathFromInputPath(String inputPath, CryptoMode mode) throws IndexOutOfBoundsException {
-
-        String extension = (mode == CryptoMode.ENCRYPT) ? ".encrypted" : ".decrypted";
+    private String getOutputPathFromInputPath(String inputPath, CryptoMode mode){
 
         String[] pathParts = inputPath.split("/");
-
         String filename = pathParts[pathParts.length - 1];
-        String[] filenameParts = filename.split("\\.");
 
-        if (filenameParts.length > 1) {
-            String name = filenameParts[0];
-            pathParts[pathParts.length - 1] = name + extension;
-            return String.join("/", pathParts);
-        } else {
-            return inputPath + extension;
+        if (mode == CryptoMode.ENCRYPT) {
+            filename += ENCRYPTED_EXTENSION;
+        }
+        if (mode == CryptoMode.DECRYPT) {
+            filename = FilenameUtils.removeExtension(filename);
         }
 
+        pathParts[pathParts.length - 1] = filename;
+        String finalJoinedPath = String.join("/", pathParts);
+
+        return finalJoinedPath;
     }
 
 }

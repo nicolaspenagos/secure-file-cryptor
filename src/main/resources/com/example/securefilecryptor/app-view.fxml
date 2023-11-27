@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Text?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.securefilecryptor.controller.AppController">
+
+
+    <HBox>
+        <Pane prefHeight="3" prefWidth="640"  style="-fx-background-color: #0D62FE" ></Pane>
+    </HBox>
+
+    <VBox alignment="center" prefHeight="477" prefWidth="680" style="-fx-background-color: #fff; -fx-padding: 0 70">
+        <VBox  style="-fx-background-color: #ffffff; -fx-padding: 0 30" prefHeight="400">
+            <HBox prefWidth="680" style="-fx-padding: 12 0">
+                <Label style="-fx-font-size: 28; -fx-font-family: CamingoCode" prefWidth="680">ENCRYPTING</Label>
+            </HBox>
+            <Pane prefHeight="2"  style="-fx-background-color: #f1f1f1" ></Pane>
+            <VBox style="-fx-padding: 30 0 0 0">
+                <Label style="-fx-translate-x: 0;-fx-translate-y: -5; -fx-text-fill: #7C7C7C">Select the file to encrypt:</Label>
+                <HBox style="-fx-padding: 0 0 0 0">
+                    <Pane style="-fx-background-color: #f1f1f1;" prefWidth="350" prefHeight="40">
+                        <Label fx:id="pathLabel" prefWidth="335" style="-fx-translate-y: 12; -fx-translate-x: 10; -fx-text-fill: #979797;">E.g. /Users/user/desktop</Label>
+                        <Pane style="-fx-background-color: #ACABAB; -fx-translate-y: 39" prefWidth="350" prefHeight="1"/>
+                    </Pane>
+                    <Button fx:id="loadBtn" onAction="#chooseFile" text="Load File" style="-fx-background-color: #0D62FE; -fx-background-radius: 0; -fx-pref-height: 40; -fx-translate-x: 5; -fx-pref-width: 85; -fx-text-fill: #fff; -fx-cursor: hand; -fx-font-family: CamingoCode;"/>
+                </HBox>
+            </VBox>
+            <VBox style="-fx-padding: 10 0 0 0; -fx-translate-y: 5; -fx-translate-x: -5;">
+
+                <Label style="-fx-text-fill: #7C7C7C; -fx-translate-x: 5; -fx-translate-y: -5;"  > Enter your password:</Label>
+                <PasswordField fx:id="passwordField" style="-fx-background-color: #f1f1f1; -fx-background-radius: 0; -fx-pref-height: 40; -fx-translate-x: 5; -fx-pref-width: 85; -fx-text-fill: #161616; -fx-font-size: 5; -fx-padding: 0 10"/>
+                <Pane style="-fx-background-color: #ACABAB;  -fx-translate-x: 5" prefWidth="350" prefHeight="1"/>
+
+            </VBox>
+
+            <VBox style="-fx-padding: 10 0 0 0; -fx-translate-y: 10; -fx-translate-x: -5;">
+
+                <Label style="-fx-text-fill: #7C7C7C; -fx-translate-x: 5; -fx-translate-y: -5;" > Verify your password:</Label>
+                <PasswordField  fx:id="passwordVerificationField" style="-fx-background-color: #f1f1f1; -fx-background-radius: 0; -fx-pref-height: 40; -fx-translate-x: 5; -fx-pref-width: 85; -fx-text-fill: #161616; -fx-font-size: 5; -fx-padding: 0 10"/>
+                <Pane style="-fx-background-color: #ACABAB;  -fx-translate-x: 5" prefWidth="350" prefHeight="1"/>
+
+            </VBox>
+            <HBox style=" -fx-translate-y: 40;  -fx-translate-x: -5;">
+                <Button fx:id="actionBtn"  onAction="#performAction" text="Encrypt" style="-fx-background-color: #0D62FE; -fx-background-radius: 0; -fx-pref-height: 40; -fx-translate-x: 5; -fx-pref-width: 85; -fx-text-fill: #fff; -fx-cursor: hand; -fx-font-family: CamingoCode;"/>
+                <StackPane style="-fx-pref-height:40; -fx-pref-width: 250; -fx-translate-x: 10; ">
+                    <Label fx:id="msgLabel" style="-fx-font-family: 'CamingoCode'; -fx-font-size: 10; -fx-text-fill:#E64A4A;"  >
+
+                    </Label>
+
+                </StackPane>
+            </HBox>
+        </VBox>
+
+    </VBox>
+
+</VBox>

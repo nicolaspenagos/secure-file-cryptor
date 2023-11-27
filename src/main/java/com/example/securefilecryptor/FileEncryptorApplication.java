@@ -1,38 +1,38 @@
 package com.example.securefilecryptor;
 
-import com.example.securefilecryptor.model.FileEncryptor;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
-public class HelloApplication extends Application {
+public class FileEncryptorApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+
+
+        Font.loadFont(getClass().getResource("/fonts/Chivo-Regular.ttf").toExternalForm(), 10);
+
+        FXMLLoader fxmlLoader = new FXMLLoader(FileEncryptorApplication.class.getResource("app-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 640, 480);
+        stage.setTitle("Secure File Cryptor");
         stage.setScene(scene);
+        stage.setResizable(false);
+
         stage.show();
     }
 
     public static void main(String[] args) {
-        //launch();
+        launch();
 
+        /*
         FileEncryptor fileEncryptor = FileEncryptor.getInstance();
 
         try {
-            fileEncryptor.encryptFile("dummy_password", "/Users/nicolaspenagos/Desktop/text.txt");
-            fileEncryptor.decryptFile("dummy_password", "/Users/nicolaspenagos/Desktop/text.encrypted");
+          fileEncryptor.encryptFile("dummy_password", "/Users/nicolaspenagos/Desktop/image.jpeg");
+          fileEncryptor.decryptFile("dummy_password", "/Users/nicolaspenagos/Desktop/image.jpeg.enc");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         } catch (InvalidKeySpecException e) {
@@ -52,7 +52,7 @@ public class HelloApplication extends Application {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-
+    */
     }
+
 }

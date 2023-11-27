@@ -8,8 +8,13 @@ import java.io.*;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 
+import com.example.securefilecryptor.exceptions.CipherErrorException;
+import com.example.securefilecryptor.exceptions.CorruptedFileException;
+import com.example.securefilecryptor.exceptions.ExceptionUtil;
+import com.example.securefilecryptor.exceptions.LoadFileErrorException;
 import org.apache.commons.io.FilenameUtils;
 
 public class FileEncryptor {
@@ -32,60 +37,58 @@ public class FileEncryptor {
         return instance;
     }
 
-    public void test(){
-        try {
-            encryptFile("SecretMsg.txt", "/Users/nicolaspenagos/Desktop/SecretMsg.txt");
+    public void encryptFile(String password, String filePath) throws LoadFileErrorException, CipherErrorException, CorruptedFileException {
+        try{
+
+            String outputPath = getOutputPathFromInputPath(filePath, CryptoMode.ENCRYPT);
+
+            FileInputStream inputStream = new FileInputStream(filePath);
+            FileOutputStream outputStream = new FileOutputStream(outputPath);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+
+            String salt = generateSalt();
+            SecretKey key = getKeyFromPassword(password, salt);
+            IvParameterSpec iv = generateIV();
+            byte[] hashSHA256 = calculateSHA256(filePath);
+
+            objectOutputStream.writeObject(iv.getIV());
+            objectOutputStream.writeObject(salt);
+            objectOutputStream.writeObject(hashSHA256);
+
+            cipherFile(key, iv, CryptoMode.ENCRYPT, inputStream, outputStream);
+
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidKeySpecException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidAlgorithmParameterException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchPaddingException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalBlockSizeException e) {
-            throw new RuntimeException(e);
-        } catch (BadPaddingException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidKeyException e) {
-            throw new RuntimeException(e);
+            throw new LoadFileErrorException();
+        } catch (GeneralSecurityException e) {
+            ExceptionUtil.handleSecurityException(e);
         }
-    }
-    public void encryptFile(String password, String filePath) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
 
-        String outputPath = getOutputPathFromInputPath(filePath, CryptoMode.ENCRYPT);
-
-        FileInputStream inputStream = new FileInputStream(filePath);
-        FileOutputStream outputStream = new FileOutputStream(outputPath);
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-
-        String salt = generateSalt();
-        SecretKey key = getKeyFromPassword(password, salt);
-        IvParameterSpec iv = generateIV();
-
-        objectOutputStream.writeObject(iv.getIV());
-        objectOutputStream.writeObject(salt);
-
-        cipherFile(key, iv, CryptoMode.ENCRYPT, inputStream, outputStream);
     }
 
-    public void decryptFile(String password, String filePath) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, ClassNotFoundException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+    public void decryptFile(String password, String filePath) throws CorruptedFileException, CipherErrorException, LoadFileErrorException {
 
-        String outputPath = getOutputPathFromInputPath(filePath, CryptoMode.DECRYPT);
+        try{
+            String outputPath = getOutputPathFromInputPath(filePath, CryptoMode.DECRYPT);
 
-        FileInputStream inputStream = new FileInputStream(filePath);
-        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+            FileInputStream inputStream = new FileInputStream(filePath);
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 
-        byte[] ivBytes = (byte[]) objectInputStream.readObject();
-        String salt = (String) objectInputStream.readObject();
+            byte[] ivBytes = (byte[]) objectInputStream.readObject();
+            String salt = (String) objectInputStream.readObject();
+            byte[] originalHash = (byte[]) objectInputStream.readObject();
 
-        SecretKey key = getKeyFromPassword(password, salt);
-        IvParameterSpec iv = new IvParameterSpec(ivBytes);
+            SecretKey key = getKeyFromPassword(password, salt);
+            IvParameterSpec iv = new IvParameterSpec(ivBytes);
 
-        FileOutputStream outputStream = new FileOutputStream(outputPath);
-        cipherFile(key, iv, CryptoMode.DECRYPT, inputStream, outputStream);
+            FileOutputStream outputStream = new FileOutputStream(outputPath);
+            cipherFile(key, iv, CryptoMode.DECRYPT, inputStream, outputStream);
+
+            verifyHash(originalHash, calculateSHA256(outputPath));
+        } catch (IOException | ClassNotFoundException e) {
+            throw new LoadFileErrorException();
+        } catch (GeneralSecurityException e) {
+            ExceptionUtil.handleSecurityException(e);
+        }
 
     }
 
@@ -114,7 +117,30 @@ public class FileEncryptor {
 
         inputStream.close();
         outputStream.close();
+
     }
+
+    private void verifyHash(byte[] originalHash, byte[] obtainedHash) throws CorruptedFileException {
+        System.out.println("Verify hash");
+        if(!Arrays.equals(originalHash, obtainedHash)){
+            throw new CorruptedFileException();
+        }
+    }
+    private byte[] calculateSHA256(String filePath) throws NoSuchAlgorithmException, IOException {
+        byte[] buffer= new byte[8192];
+        int count;
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filePath));
+        while ((count = bis.read(buffer)) > 0) {
+            digest.update(buffer, 0, count);
+        }
+        bis.close();
+
+        byte[] hash = digest.digest();
+        return hash;
+    }
+
+
 
     private SecretKey getKeyFromPassword(String password, String salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory factory = SecretKeyFactory.getInstance(PBKDF2_NAME);

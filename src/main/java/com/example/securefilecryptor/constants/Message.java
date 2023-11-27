@@ -5,11 +5,11 @@ public enum Message {
     FILE_PATH_ERROR("Your file path is empty!"),
     PASSWORD_DO_NOT_MATCH("Your passwords do not match"),
     SHORT_PASSWORD("Your password must be at least 8 characters long!"),
-    DECRYPTION_ERROR("It was not possible to decipher your file"),
-    DECRYPTION_SUCCESS("Your file was successfully deciphered"),
-    ENCRYPTION_ERROR("It was not possible to cipher your file"),
+    CIPHER_ERROR("Error while ciphering"),
+    LOAD_FILE_ERROR("The was an error loading your file"),
     ENCRYPTION_SUCCESS("Your file was successfully ciphered"),
-    EMPTY_PASSWORD("One of your passwords is empty");
+    EMPTY_PASSWORD("One of your passwords is empty"),
+    CORRUPTED_FILE("The file is damage or have been corrupted");
 
     private final String message;
 

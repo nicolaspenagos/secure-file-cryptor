@@ -1,6 +1,7 @@
 package com.example.securefilecryptor.controller;
 
 import com.example.securefilecryptor.constants.Message;
+import com.example.securefilecryptor.exceptions.CorruptedFileException;
 import com.example.securefilecryptor.model.FileEncryptor;
 import com.example.securefilecryptor.styles.ButtonStyle;
 import com.example.securefilecryptor.styles.LabelStyle;
@@ -81,19 +82,20 @@ public class AppController {
 
         //fileEncryptor.test();
         if(!validateForm()){
-            return;
+           // return;
         }
+        String errorMsg;
 
         try{
             if(isDecrypting){
-
+                fileEncryptor.decryptFile(password, filePath);
             }else{
+
                 fileEncryptor.encryptFile(password, filePath);
                 showMsg(Message.ENCRYPTION_SUCCESS.getMessage(), false);
             }
-        }catch (Exception e){
-            String errorMsg = isDecrypting?Message.DECRYPTION_ERROR.getMessage():Message.ENCRYPTION_ERROR.getMessage();
-            System.out.println(e.getMessage());
+        }catch (Exception e) {
+            errorMsg = e.getMessage();
             showMsg(errorMsg, true);
         }finally {
             clearForm();

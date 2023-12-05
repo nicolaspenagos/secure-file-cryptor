@@ -10,4 +10,4 @@ The class uses a singleton pattern to ensure a single instance is used throughou
 
 The project also provides methods for generating random salt and IV, calculating SHA-256 hash, and obtaining the output file path based on the input file path and the cryptographic mode. It handles exceptions related to file loading, encryption/decryption, and file integrity verification.
 
-![secure-file-cryptor](https://github.com/nicolaspenagos/secure-file-cryptor/assets/47872252/6ed4d9c9-ee5c-4e21-a3c0-34501de8e2e5)
+![secure-file-cryptor (1)](https://github.com/nicolaspenagos/secure-file-cryptor/assets/47872252/4d78ba6d-c8da-45f1-9fd6-c9e6d54c14e3)
